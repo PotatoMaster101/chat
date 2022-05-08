@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  adminer:
+    container_name: adminer
+    hostname: adminer
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+  db:
+    container_name: postgres
+    hostname: postgres
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: "P@ssw0rd123!!!"
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+  web:
+    container_name: chat
+    hostname: chat
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      # ASPNETCORE_Kestrel__Certificates__Default__Password: "cert-password"
+      # ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/chat.pfx"
+      # ASPNETCORE_URLS: "https://+:443;http://+:80"
+    depends_on:
+      - db
+    ports:
+      - "80:80"
+      - "443:443"
+    # volumes:
+    #   - ~/.aspnet/https:/https:ro
+volumes:
+  data:
